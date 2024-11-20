@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <link rel="stylesheet" href="ml.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, select, button {
+            padding: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Predict House Price</h2>
+
+    <form id="predictionForm">
+        <label for="input1">Number of Bedrooms:</label>
+        <input type="number" id="input1" name="bedrooms" placeholder="Enter number of bedrooms" required>
+
+        <label for="input2">Area (sq ft):</label>
+        <input type="number" id="input2" name="area" placeholder="Enter area in square feet" required>
+
+        <label for="dropdown1">Location:</label>
+        <select id="dropdown1" name="location" required>
+            <option value="">Select Location</option>
+            <option value="city_center">City Center</option>
+            <option value="suburbs">Suburbs</option>
+            <option value="rural">Rural</option>
+        </select>
+
+        <label for="dropdown2">House Type:</label>
+        <select id="dropdown2" name="house_type" required>
+            <option value="">Select House Type</option>
+            <option value="detached">Detached</option>
+            <option value="semi-detached">Semi-detached</option>
+            <option value="apartment">Apartment</option>
+        </select>
+
+        <label for="dropdown3">Number of Bathrooms:</label>
+        <select id="dropdown3" name="bathrooms" required>
+            <option value="">Select Number of Bathrooms</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+
+        <label for="dropdown4">Garage:</label>
+        <select id="dropdown4" name="garage" required>
+            <option value="">Select Garage Availability</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+
+        <button type="submit">Predict Price</button>
+    </form>
+
+    <h3>Predicted Price: <span id="predictedPrice">N/A</span></h3>
+</div>
+
+<script>
+    document.getElementById('predictionForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        // Convert form data to JSON for the back-end
+        const data = {
+            bedrooms: formData.get('bedrooms'),
+            area: formData.get('area'),
+            location: formData.get('location'),
+            house_type: formData.get('house_type'),
+            bathrooms: formData.get('bathrooms'),
+            garage: formData.get('garage')
+        };
+
+        // Send data to the back-end via Fetch API
+        fetch('/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            document.getElementById('predictedPrice').innerText = '$' + result.price;
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+
+</body>
+</html>
